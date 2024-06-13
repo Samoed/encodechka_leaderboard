@@ -22,7 +22,7 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v4.6.0
     hooks:
       - id: check-yaml
       - id: check-case-conflict
@@ -33,21 +33,8 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        name: Format imports
-
-#  - repo: https://github.com/psf/black
-#    rev: 22.12.0
-#    hooks:
-#      - id: black
-#        name: Format code
-#        additional_dependencies: ['click==8.0.2']
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.4
+    rev: v0.4.8
     hooks:
       - id: ruff
         types_or: [ python, pyi, jupyter ]
@@ -62,7 +49,7 @@ repos:
         args: [ --config, pyproject.toml ]
 
   - repo: https://github.com/pdm-project/pdm
-    rev: 2.15.3
+    rev: 2.15.4
     hooks:
       - id: pdm-export
         args: [ '-o', 'requirements.txt']

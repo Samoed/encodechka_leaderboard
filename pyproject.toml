@@ -7,9 +7,7 @@ authors = [
 ]
 dependencies = [
     "APScheduler>=3.10.4",
-    #    "black",
     "click>=8.1.7",
-    #    "datasets",
     "gradio>=4.36.1",
     "gradio-client>=1.0.1",
     "huggingface-hub>=0.18.0",
@@ -19,11 +17,6 @@ dependencies = [
     "python-dateutil>=2.9.0.post0",
     "requests>=2.32.3",
     "tqdm>=4.66.4",
-    #    "transformers",
-    #    "tokenizers>=0.15.0",
-    #    "lm-eval @ git+https://github.com/EleutherAI/lm-evaluation-harness.git@b281b0921b636bc36ad05c0b0b0763bd6dd43463",
-    #    "accelerate",
-    #    "sentencepiece",
     "pyarrow>=16.1.0",
     "pydantic-settings>=2.3.3",
     "markdown>=3.6",
