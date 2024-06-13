@@ -6,7 +6,7 @@ colorTo: indigo
 sdk: gradio
 app_file: src/encodechka/app.py
 pinned: true
-license: MIT
+license: mit
 ---
 
 # Start the configuration
