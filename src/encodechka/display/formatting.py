@@ -5,7 +5,9 @@ def model_hyperlink(link, model_name):
     )
 
 
-def make_clickable_model(model_name):
+def make_clickable_model(model_name: str) -> str:
+    if model_name.find("/") == -1:
+        return model_name
     link = f"https://huggingface.co/{model_name}"
     return model_hyperlink(link, model_name)
 

@@ -9,69 +9,40 @@ class Task:
     col_name: str
 
 
-# Select your tasks here
-# ---------------------------------------------------
 class Tasks(Enum):
-    # task_key in the json file, metric_key in the json file, name to display in the leaderboard
-    task0 = Task("anli_r1", "acc", "ANLI")
-    task1 = Task("logiqa", "acc_norm", "LogiQA")
+    STS = Task("STS", "STS", "STS")
+    PI = Task("PI", "PI", "PI")
+    NLI = Task("NLI", "NLI", "NLI")
+    SA = Task("SA", "SA", "SA")
+    TI = Task("TI", "TI", "TI")
+    II = Task("II", "II", "II")
+    IC = Task("IC", "IC", "IC")
+    ICX = Task("ICX", "ICX", "ICX")
+    NE1 = Task("NE1", "NE1", "NE1")
+    NE2 = Task("NE2", "NE2", "NE2")
 
 
-NUM_FEWSHOT = 0  # Change with your few shot
-# ---------------------------------------------------
+TITLE = """<h1 align="center" id="space-title">Encodechka</h1>"""
 
-
-# Your leaderboard name
-TITLE = """<h1 align="center" id="space-title">Demo leaderboard</h1>"""
-
-# What does your leaderboard evaluate?
 INTRODUCTION_TEXT = """
-Intro text
+<a href="https://github.com/avidale/encodechka">Оригинальный репозиторий GitHub</a>
+
+Задачи
+- Semantic text similarity (**STS**) на основе переведённого датасета 
+[STS-B](https://huggingface.co/datasets/stsb_multi_mt);
+- Paraphrase identification (**PI**) на основе датасета paraphraser.ru;
+- Natural language inference (**NLI**) на датасете [XNLI](https://github.com/facebookresearch/XNLI);
+- Sentiment analysis (**SA**) на данных [SentiRuEval2016](http://www.dialog-21.ru/evaluation/2016/sentiment/).
+- Toxicity identification (**TI**) на датасете токсичных комментариев из 
+[OKMLCup](https://cups.mail.ru/ru/contests/okmlcup2020);
+- Inappropriateness identification (**II**) на 
+[датасете Сколтеха](https://github.com/skoltech-nlp/inappropriate-sensitive-topics);
+- Intent classification (**IC**) и её кросс-язычная версия **ICX** на датасете 
+[NLU-evaluation-data](https://github.com/xliuhw/NLU-Evaluation-Data), который я автоматически перевёл на русский. 
+В IC классификатор обучается на русских данных, а в ICX – на английских, а тестируется в обоих случаях на русских.
+- Распознавание именованных сущностей на датасетах 
+[factRuEval-2016](https://github.com/dialogue-evaluation/factRuEval-2016) (**NE1**) и 
+[RuDReC](https://github.com/cimm-kzn/RuDReC) (**NE2**). Эти две задачи требуют получать эмбеддинги отдельных токенов, 
+а не целых предложений; поэтому там участвуют не все модели.
 """
 
-# Which evaluations are you running? how can people reproduce what you have?
-LLM_BENCHMARKS_TEXT = """
-## How it works
-
-## Reproducibility
-To reproduce our results, here is the commands you can run:
-
-"""
-
-EVALUATION_QUEUE_TEXT = """
-## Some good practices before submitting a model
-
-### 1) Make sure you can load your model and tokenizer using AutoClasses:
-```python
-from transformers import AutoConfig, AutoModel, AutoTokenizer
-config = AutoConfig.from_pretrained("your model name", revision=revision)
-model = AutoModel.from_pretrained("your model name", revision=revision)
-tokenizer = AutoTokenizer.from_pretrained("your model name", revision=revision)
-```
-If this step fails, follow the error messages to debug your model before submitting it. It's likely your model has been
-improperly uploaded.
-
-Note: make sure your model is public!
-Note: if your model needs `use_remote_code=True`, we do not support this option yet but we are working on adding it,
-stay posted!
-
-### 2) Convert your model weights to [safetensors](https://huggingface.co/docs/safetensors/index)
-It's a new format for storing weights which is safer and faster to load and use. It will also allow us to add the number
- of parameters of your model to the `Extended Viewer`!
-
-### 3) Make sure your model has an open license!
-This is a leaderboard for Open LLMs, and we'd love for as many people as possible to know they can use your model 🤗
-
-### 4) Fill up your model card
-When we add extra information about models to the leaderboard, it will be automatically taken from the model card
-
-## In case of model failure
-If your model is displayed in the `FAILED` category, its execution stopped.
-Make sure you have followed the above steps first.
-If everything is done, check you can launch the EleutherAIHarness on your model locally, using the above command without
- modifications (you can add `--limit` to limit the number of examples per task).
-"""
-
-CITATION_BUTTON_LABEL = "Copy the following snippet to cite these results"
-CITATION_BUTTON_TEXT = r"""
-"""
