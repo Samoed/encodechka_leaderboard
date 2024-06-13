@@ -1,5 +1,8 @@
 def model_hyperlink(link, model_name):
-    return f'<a target="_blank" href="{link}" style="color: var(--link-text-color); text-decoration: underline;text-decoration-style: dotted;">{model_name}</a>'
+    return (
+        f'<a target="_blank" href="{link}" style="color: var(--link-text-color); text-decoration: underline;'
+        f'text-decoration-style: dotted;">{model_name}</a>'
+    )
 
 
 def make_clickable_model(model_name):

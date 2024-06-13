@@ -53,7 +53,9 @@
 #             return styled_error(f'Base model "{base_model}" {error}')
 #
 #     if not weight_type == "Adapter":
-#         model_on_hub, error, _ = is_model_on_hub(model_name=model, revision=revision, token=TOKEN, test_tokenizer=True)
+#         model_on_hub, error, _ = is_model_on_hub(
+#           model_name=model, revision=revision, token=TOKEN, test_tokenizer=True
+#         )
 #         if not model_on_hub:
 #             return styled_error(f'Model "{model}" {error}')
 #
@@ -118,5 +120,6 @@
 #     os.remove(out_path)
 #
 #     return styled_message(
-#         "Your request has been submitted to the evaluation queue!\nPlease wait for up to an hour for the model to show in the PENDING list."
+#         "Your request has been submitted to the evaluation queue!\n
+#         Please wait for up to an hour for the model to show in the PENDING list."
 #     )

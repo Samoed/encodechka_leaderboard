@@ -4,10 +4,11 @@
 
 style:
 	ruff format
-	pre-commit run --all-files
-
 
 quality:
 	ruff check
+
+pre-commit:
+	pre-commit run --all-files
 
 all: style quality

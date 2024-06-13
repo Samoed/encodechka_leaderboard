@@ -5,10 +5,8 @@ from dataclasses import dataclass
 
 import dateutil
 import numpy as np
-
-from ..display.formatting import make_clickable_model
-from ..display.utils import AutoEvalColumn, ModelType, Precision, Tasks, WeightType
-from ..submission.check_validity import is_model_on_hub
+from display.formatting import make_clickable_model
+from display.utils import AutoEvalColumn, ModelType, Precision, Tasks, WeightType
 
 
 @dataclass
@@ -56,17 +54,17 @@ class EvalResult:
             result_key = f"{org}_{model}_{precision.value.name}"
         full_model = "/".join(org_and_model)
 
-        still_on_hub, _, model_config = is_model_on_hub(
-            full_model,
-            config.get("model_sha", "main"),
-            trust_remote_code=True,
-            test_tokenizer=False,
-        )
-        architecture = "?"
-        if model_config is not None:
-            architectures = getattr(model_config, "architectures", None)
-            if architectures:
-                architecture = ";".join(architectures)
+        # still_on_hub, _, model_config = is_model_on_hub(
+        #     full_model,
+        #     config.get("model_sha", "main"),
+        #     trust_remote_code=True,
+        #     test_tokenizer=False,
+        # )
+        # architecture = "?"
+        # if model_config is not None:
+        #     architectures = getattr(model_config, "architectures", None)
+        #     if architectures:
+        #         architecture = ";".join(architectures)
 
         # Extract results available in this file (some results are split in several files)
         results = {}
@@ -89,8 +87,8 @@ class EvalResult:
             results=results,
             precision=precision,
             revision=config.get("model_sha", ""),
-            still_on_hub=still_on_hub,
-            architecture=architecture,
+            # still_on_hub=still_on_hub,
+            # architecture=architecture,
         )
 
     def update_with_request_file(self, requests_path):
