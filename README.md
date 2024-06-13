@@ -1,5 +1,5 @@
 ---
-title: Demo Leaderboard
+title: E
 emoji: 🥇
 colorFrom: green
 colorTo: indigo
