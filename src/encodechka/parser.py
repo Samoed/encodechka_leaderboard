@@ -1,7 +1,7 @@
 from io import StringIO
 
-import pandas as pd
 import markdown
+import pandas as pd
 import requests
 from settings import get_settings
 
@@ -13,7 +13,7 @@ def get_readme() -> str:
 
 
 def get_readme_html() -> str:
-    return markdown.markdown(get_readme(), extensions=['tables'])
+    return markdown.markdown(get_readme(), extensions=["tables"])
 
 
 def get_readme_df() -> pd.DataFrame:

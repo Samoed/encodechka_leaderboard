@@ -1,7 +1,5 @@
 from dataclasses import dataclass, make_dataclass
-from enum import Enum
 
-import pandas as pd
 from about import Tasks
 
 
@@ -27,9 +25,8 @@ auto_eval_column_dict = [
         ColumnContent,
         ColumnContent("model", "markdown", True, never_hidden=True),
     ),
-    (
-        "CPU", ColumnContent, ColumnContent("CPU", "number", True)
-    ), ("GPU", ColumnContent, ColumnContent("GPU", "number", True)),
+    ("CPU", ColumnContent, ColumnContent("CPU", "number", True)),
+    ("GPU", ColumnContent, ColumnContent("GPU", "number", True)),
     ("size", ColumnContent, ColumnContent("size", "number", True)),
     ("MeanS", ColumnContent, ColumnContent("Mean S", "number", True)),
     ("MeanSW", ColumnContent, ColumnContent("Mean S+W", "number", True)),
@@ -44,7 +41,11 @@ auto_eval_column_dict = [
     ("ICX", ColumnContent, ColumnContent("ICX", "number", True)),
     ("NE1", ColumnContent, ColumnContent("NE1", "number", True)),
     ("NE2", ColumnContent, ColumnContent("NE2", "number", True)),
-    ("is_private", ColumnContent, ColumnContent("is_private", "boolean", True, hidden=True)),
+    (
+        "is_private",
+        ColumnContent,
+        ColumnContent("is_private", "boolean", True, hidden=True),
+    ),
 ]
 # We use make dataclass to dynamically fill the scores from Tasks
 AutoEvalColumn = make_dataclass("AutoEvalColumn", auto_eval_column_dict, frozen=True)

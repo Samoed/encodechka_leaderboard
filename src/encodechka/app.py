@@ -1,26 +1,14 @@
 import gradio as gr
 import pandas as pd
-from about import (
-    INTRODUCTION_TEXT,
-    TITLE,
-)
+from about import INTRODUCTION_TEXT, TITLE
 from apscheduler.schedulers.background import BackgroundScheduler
 from display.css_html_js import custom_css
-from display.utils import (
-    COLS,
-    TYPES,
-    AutoEvalColumn,
-    fields,
-)
-
+from display.utils import COLS, TYPES, AutoEvalColumn, fields
 from parser import update_leaderboard_table
 from populate import get_leaderboard_df
-from settings import (
-    get_settings,
-)
+from settings import get_settings
 
 settings = get_settings()
-
 
 
 def filter_table(
@@ -87,7 +75,7 @@ def get_leaderboard() -> gr.TabItem:
                 with gr.Row():
                     search_bar = gr.Textbox(
                         placeholder=" 🔍 Search for your model (separate multiple queries with `;`) "
-                                    "and press ENTER...",
+                        "and press ENTER...",
                         show_label=False,
                         elem_id="search-bar",
                     )

@@ -1,6 +1,5 @@
 import os
 
-from huggingface_hub import HfApi
 from pydantic_settings import BaseSettings
 
 

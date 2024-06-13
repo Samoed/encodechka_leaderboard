@@ -1,5 +1,4 @@
 import pandas as pd
-
 from display.formatting import make_clickable_model
 from display.utils import AutoEvalColumn
 from settings import Settings
