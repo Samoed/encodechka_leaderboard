@@ -1,10 +1,6 @@
-import subprocess
 import gradio as gr
 import pandas as pd
-from apscheduler.schedulers.background import BackgroundScheduler
-from huggingface_hub import snapshot_download
-
-from src.about import (
+from about import (
     CITATION_BUTTON_LABEL,
     CITATION_BUTTON_TEXT,
     EVALUATION_QUEUE_TEXT,
@@ -12,8 +8,9 @@ from src.about import (
     LLM_BENCHMARKS_TEXT,
     TITLE,
 )
-from src.display.css_html_js import custom_css
-from src.display.utils import (
+from apscheduler.schedulers.background import BackgroundScheduler
+from display.css_html_js import custom_css
+from display.utils import (
     BENCHMARK_COLS,
     COLS,
     EVAL_COLS,
@@ -22,29 +19,50 @@ from src.display.utils import (
     TYPES,
     AutoEvalColumn,
     ModelType,
-    fields,
+    Precision,
     WeightType,
-    Precision
+    fields,
 )
-from src.envs import API, EVAL_REQUESTS_PATH, EVAL_RESULTS_PATH, QUEUE_REPO, REPO_ID, RESULTS_REPO, TOKEN
-from src.populate import get_evaluation_queue_df, get_leaderboard_df
-from src.submission.submit import add_new_eval
+from envs import (
+    API,
+    EVAL_REQUESTS_PATH,
+    EVAL_RESULTS_PATH,
+    QUEUE_REPO,
+    REPO_ID,
+    RESULTS_REPO,
+    TOKEN,
+)
+from huggingface_hub import snapshot_download
+from populate import get_evaluation_queue_df, get_leaderboard_df
+
+# from submission.submit import add_new_eval
 
 
 def restart_space():
     API.restart_space(repo_id=REPO_ID)
 
+
 try:
     print(EVAL_REQUESTS_PATH)
     snapshot_download(
-        repo_id=QUEUE_REPO, local_dir=EVAL_REQUESTS_PATH, repo_type="dataset", tqdm_class=None, etag_timeout=30, token=TOKEN
+        repo_id=QUEUE_REPO,
+        local_dir=EVAL_REQUESTS_PATH,
+        repo_type="dataset",
+        tqdm_class=None,
+        etag_timeout=30,
+        token=TOKEN,
     )
 except Exception:
     restart_space()
 try:
     print(EVAL_RESULTS_PATH)
     snapshot_download(
-        repo_id=RESULTS_REPO, local_dir=EVAL_RESULTS_PATH, repo_type="dataset", tqdm_class=None, etag_timeout=30, token=TOKEN
+        repo_id=RESULTS_REPO,
+        local_dir=EVAL_RESULTS_PATH,
+        repo_type="dataset",
+        tqdm_class=None,
+        etag_timeout=30,
+        token=TOKEN,
     )
 except Exception:
     restart_space()
@@ -86,9 +104,7 @@ def select_columns(df: pd.DataFrame, columns: list) -> pd.DataFrame:
         AutoEvalColumn.model.name,
     ]
     # We use COLS to maintain sorting
-    filtered_df = df[
-        always_here_cols + [c for c in COLS if c in df.columns and c in columns] 
-    ]
+    filtered_df = df[always_here_cols + [c for c in COLS if c in df.columns and c in columns]]
     return filtered_df
 
 
@@ -105,24 +121,32 @@ def filter_queries(query: str, filtered_df: pd.DataFrame) -> pd.DataFrame:
         if len(final_df) > 0:
             filtered_df = pd.concat(final_df)
             filtered_df = filtered_df.drop_duplicates(
-                subset=[AutoEvalColumn.model.name, AutoEvalColumn.precision.name, AutoEvalColumn.revision.name]
+                subset=[
+                    AutoEvalColumn.model.name,
+                    AutoEvalColumn.precision.name,
+                    AutoEvalColumn.revision.name,
+                ]
             )
 
     return filtered_df
 
 
 def filter_models(
-    df: pd.DataFrame, type_query: list, size_query: list, precision_query: list, show_deleted: bool
+    df: pd.DataFrame,
+    type_query: list,
+    size_query: list,
+    precision_query: list,
+    show_deleted: bool,
 ) -> pd.DataFrame:
     # Show all models
     if show_deleted:
         filtered_df = df
     else:  # Show only still on the hub models
-        filtered_df = df[df[AutoEvalColumn.still_on_hub.name] == True]
+        filtered_df = df[df[AutoEvalColumn.still_on_hub.name] is True]
 
     type_emoji = [t[0] for t in type_query]
     filtered_df = filtered_df.loc[df[AutoEvalColumn.model_type_symbol.name].isin(type_emoji)]
-    filtered_df = filtered_df.loc[df[AutoEvalColumn.precision.name].isin(precision_query + ["None"])]
+    filtered_df = filtered_df.loc[df[AutoEvalColumn.precision.name].isin([*precision_query, "None"])]
 
     numeric_interval = pd.IntervalIndex(sorted([NUMERIC_INTERVALS[s] for s in size_query]))
     params_column = pd.to_numeric(df[AutoEvalColumn.params.name], errors="coerce")
@@ -149,11 +173,7 @@ with demo:
                         )
                     with gr.Row():
                         shown_columns = gr.CheckboxGroup(
-                            choices=[
-                                c.name
-                                for c in fields(AutoEvalColumn)
-                                if not c.hidden and not c.never_hidden
-                            ],
+                            choices=[c.name for c in fields(AutoEvalColumn) if not c.hidden and not c.never_hidden],
                             value=[
                                 c.name
                                 for c in fields(AutoEvalColumn)
@@ -165,10 +185,12 @@ with demo:
                         )
                     with gr.Row():
                         deleted_models_visibility = gr.Checkbox(
-                            value=False, label="Show gated/private/deleted models", interactive=True
+                            value=False,
+                            label="Show gated/private/deleted models",
+                            interactive=True,
                         )
                 with gr.Column(min_width=320):
-                    #with gr.Box(elem_id="box-filter"):
+                    # with gr.Box(elem_id="box-filter"):
                     filter_columns_type = gr.CheckboxGroup(
                         label="Model types",
                         choices=[t.to_str() for t in ModelType],
@@ -192,10 +214,7 @@ with demo:
                     )
 
             leaderboard_table = gr.components.Dataframe(
-                value=leaderboard_df[
-                    [c.name for c in fields(AutoEvalColumn) if c.never_hidden]
-                    + shown_columns.value
-                ],
+                value=leaderboard_df[[c.name for c in fields(AutoEvalColumn) if c.never_hidden] + shown_columns.value],
                 headers=[c.name for c in fields(AutoEvalColumn) if c.never_hidden] + shown_columns.value,
                 datatype=TYPES,
                 elem_id="leaderboard-table",
@@ -223,7 +242,13 @@ with demo:
                 ],
                 leaderboard_table,
             )
-            for selector in [shown_columns, filter_columns_type, filter_columns_precision, filter_columns_size, deleted_models_visibility]:
+            for selector in [
+                shown_columns,
+                filter_columns_type,
+                filter_columns_precision,
+                filter_columns_size,
+                deleted_models_visibility,
+            ]:
                 selector.change(
                     update_table,
                     [
@@ -314,20 +339,20 @@ with demo:
                     )
                     base_model_name_textbox = gr.Textbox(label="Base model (for delta or adapter weights)")
 
-            submit_button = gr.Button("Submit Eval")
-            submission_result = gr.Markdown()
-            submit_button.click(
-                add_new_eval,
-                [
-                    model_name_textbox,
-                    base_model_name_textbox,
-                    revision_name_textbox,
-                    precision,
-                    weight_type,
-                    model_type,
-                ],
-                submission_result,
-            )
+            # submit_button = gr.Button("Submit Eval")
+            # submission_result = gr.Markdown()
+            # submit_button.click(
+            #     add_new_eval,
+            #     [
+            #         model_name_textbox,
+            #         base_model_name_textbox,
+            #         revision_name_textbox,
+            #         precision,
+            #         weight_type,
+            #         model_type,
+            #     ],
+            #     submission_result,
+            # )
 
     with gr.Row():
         with gr.Accordion("📙 Citation", open=False):

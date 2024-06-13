@@ -1,35 +1,34 @@
 import glob
 import json
-import math
 import os
 from dataclasses import dataclass
 
 import dateutil
 import numpy as np
 
-from src.display.formatting import make_clickable_model
-from src.display.utils import AutoEvalColumn, ModelType, Tasks, Precision, WeightType
-from src.submission.check_validity import is_model_on_hub
+from ..display.formatting import make_clickable_model
+from ..display.utils import AutoEvalColumn, ModelType, Precision, Tasks, WeightType
+from ..submission.check_validity import is_model_on_hub
 
 
 @dataclass
 class EvalResult:
-    """Represents one full evaluation. Built from a combination of the result and request file for a given run.
-    """
-    eval_name: str # org_model_precision (uid)
-    full_model: str # org/model (path on hub)
-    org: str 
+    """Represents one full evaluation. Built from a combination of the result and request file for a given run."""
+
+    eval_name: str  # org_model_precision (uid)
+    full_model: str  # org/model (path on hub)
+    org: str
     model: str
-    revision: str # commit hash, "" if main
+    revision: str  # commit hash, "" if main
     results: dict
     precision: Precision = Precision.Unknown
-    model_type: ModelType = ModelType.Unknown # Pretrained, fine tuned, ...
-    weight_type: WeightType = WeightType.Original # Original or Adapter
-    architecture: str = "Unknown" 
+    model_type: ModelType = ModelType.Unknown  # Pretrained, fine tuned, ...
+    weight_type: WeightType = WeightType.Original  # Original or Adapter
+    architecture: str = "Unknown"
     license: str = "?"
     likes: int = 0
     num_params: int = 0
-    date: str = "" # submission date of request file
+    date: str = ""  # submission date of request file
     still_on_hub: bool = False
 
     @classmethod
@@ -58,7 +57,10 @@ class EvalResult:
         full_model = "/".join(org_and_model)
 
         still_on_hub, _, model_config = is_model_on_hub(
-            full_model, config.get("model_sha", "main"), trust_remote_code=True, test_tokenizer=False
+            full_model,
+            config.get("model_sha", "main"),
+            trust_remote_code=True,
+            test_tokenizer=False,
         )
         architecture = "?"
         if model_config is not None:
@@ -85,10 +87,10 @@ class EvalResult:
             org=org,
             model=model,
             results=results,
-            precision=precision,  
-            revision= config.get("model_sha", ""),
+            precision=precision,
+            revision=config.get("model_sha", ""),
             still_on_hub=still_on_hub,
-            architecture=architecture
+            architecture=architecture,
         )
 
     def update_with_request_file(self, requests_path):
@@ -96,7 +98,7 @@ class EvalResult:
         request_file = get_request_file_for_model(requests_path, self.full_model, self.precision.value.name)
 
         try:
-            with open(request_file, "r") as f:
+            with open(request_file) as f:
                 request = json.load(f)
             self.model_type = ModelType.from_str(request.get("model_type", ""))
             self.weight_type = WeightType[request.get("weight_type", "Original")]
@@ -144,12 +146,9 @@ def get_request_file_for_model(requests_path, model_name, precision):
     request_file = ""
     request_files = sorted(request_files, reverse=True)
     for tmp_request_file in request_files:
-        with open(tmp_request_file, "r") as f:
+        with open(tmp_request_file) as f:
             req_content = json.load(f)
-            if (
-                req_content["status"] in ["FINISHED"]
-                and req_content["precision"] == precision.split(".")[-1]
-            ):
+            if req_content["status"] in ["FINISHED"] and req_content["precision"] == precision.split(".")[-1]:
                 request_file = tmp_request_file
     return request_file
 
@@ -188,7 +187,7 @@ def get_raw_eval_results(results_path: str, requests_path: str) -> list[EvalResu
     results = []
     for v in eval_results.values():
         try:
-            v.to_dict() # we test if the dict version is complete
+            v.to_dict()  # we test if the dict version is complete
             results.append(v)
         except KeyError:  # not all eval values present
             continue

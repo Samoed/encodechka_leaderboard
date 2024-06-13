@@ -46,8 +46,17 @@ repos:
         name: Format code
         additional_dependencies: ['click==8.0.2']
 
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    # Ruff version.
-    rev: 'v0.0.267'
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.4
     hooks:
       - id: ruff
+        types_or: [ python, pyi, jupyter ]
+        args: [ --config, pyproject.toml, --fix, --output-format=github]
+
+      - id: ruff
+        types_or: [ python, pyi, jupyter ]
+        args: [ --config, pyproject.toml, --fix ]
+      # Run the formatter.
+      - id: ruff-format
+        types_or: [ python, pyi, jupyter ]
+        args: [ --config, pyproject.toml ]

@@ -11,3 +11,4 @@ eval-results/
 eval-queue-bk/
 eval-results-bk/
 logs/
+/.pdm-python

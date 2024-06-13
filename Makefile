@@ -1,13 +1,13 @@
 .PHONY: style format
 
+.DEFAULT_GOAL := all
 
 style:
-	python -m black --line-length 119 .
-	python -m isort .
-	ruff check --fix .
+	ruff format
+	pre-commit run --all-files
 
 
 quality:
-	python -m black --check --line-length 119 .
-	python -m isort --check-only .
-	ruff check .
+	ruff check
+
+all: style quality

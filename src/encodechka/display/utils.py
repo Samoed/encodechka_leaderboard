@@ -3,7 +3,8 @@ from enum import Enum
 
 import pandas as pd
 
-from src.about import Tasks
+from ..about import Tasks
+
 
 def fields(raw_class):
     return [v for k, v in raw_class.__dict__.items() if k[:2] != "__" and k[-2:] != "__"]
@@ -20,12 +21,25 @@ class ColumnContent:
     hidden: bool = False
     never_hidden: bool = False
 
+
 ## Leaderboard columns
 auto_eval_column_dict = []
 # Init
-auto_eval_column_dict.append(["model_type_symbol", ColumnContent, ColumnContent("T", "str", True, never_hidden=True)])
-auto_eval_column_dict.append(["model", ColumnContent, ColumnContent("Model", "markdown", True, never_hidden=True)])
-#Scores
+auto_eval_column_dict.append(
+    [
+        "model_type_symbol",
+        ColumnContent,
+        ColumnContent("T", "str", True, never_hidden=True),
+    ]
+)
+auto_eval_column_dict.append(
+    [
+        "model",
+        ColumnContent,
+        ColumnContent("Model", "markdown", True, never_hidden=True),
+    ]
+)
+# Scores
 auto_eval_column_dict.append(["average", ColumnContent, ColumnContent("Average ⬆️", "number", True)])
 for task in Tasks:
     auto_eval_column_dict.append([task.name, ColumnContent, ColumnContent(task.value.col_name, "number", True)])
@@ -37,11 +51,18 @@ auto_eval_column_dict.append(["precision", ColumnContent, ColumnContent("Precisi
 auto_eval_column_dict.append(["license", ColumnContent, ColumnContent("Hub License", "str", False)])
 auto_eval_column_dict.append(["params", ColumnContent, ColumnContent("#Params (B)", "number", False)])
 auto_eval_column_dict.append(["likes", ColumnContent, ColumnContent("Hub ❤️", "number", False)])
-auto_eval_column_dict.append(["still_on_hub", ColumnContent, ColumnContent("Available on the hub", "bool", False)])
+auto_eval_column_dict.append(
+    [
+        "still_on_hub",
+        ColumnContent,
+        ColumnContent("Available on the hub", "bool", False),
+    ]
+)
 auto_eval_column_dict.append(["revision", ColumnContent, ColumnContent("Model sha", "str", False, False)])
 
 # We use make dataclass to dynamically fill the scores from Tasks
 AutoEvalColumn = make_dataclass("AutoEvalColumn", auto_eval_column_dict, frozen=True)
+
 
 ## For the queue columns in the submission tab
 @dataclass(frozen=True)
@@ -53,12 +74,13 @@ class EvalQueueColumn:  # Queue column
     weight_type = ColumnContent("weight_type", "str", "Original")
     status = ColumnContent("status", "str", True)
 
+
 ## All the model information that we might need
 @dataclass
 class ModelDetails:
     name: str
     display_name: str = ""
-    symbol: str = "" # emoji
+    symbol: str = ""  # emoji
 
 
 class ModelType(Enum):
@@ -83,18 +105,20 @@ class ModelType(Enum):
             return ModelType.IFT
         return ModelType.Unknown
 
+
 class WeightType(Enum):
     Adapter = ModelDetails("Adapter")
     Original = ModelDetails("Original")
     Delta = ModelDetails("Delta")
 
+
 class Precision(Enum):
     float16 = ModelDetails("float16")
     bfloat16 = ModelDetails("bfloat16")
     float32 = ModelDetails("float32")
-    #qt_8bit = ModelDetails("8bit")
-    #qt_4bit = ModelDetails("4bit")
-    #qt_GPTQ = ModelDetails("GPTQ")
+    # qt_8bit = ModelDetails("8bit")
+    # qt_4bit = ModelDetails("4bit")
+    # qt_GPTQ = ModelDetails("GPTQ")
     Unknown = ModelDetails("?")
 
     def from_str(precision):
@@ -104,13 +128,14 @@ class Precision(Enum):
             return Precision.bfloat16
         if precision in ["float32"]:
             return Precision.float32
-        #if precision in ["8bit"]:
+        # if precision in ["8bit"]:
         #    return Precision.qt_8bit
-        #if precision in ["4bit"]:
+        # if precision in ["4bit"]:
         #    return Precision.qt_4bit
-        #if precision in ["GPTQ", "None"]:
+        # if precision in ["GPTQ", "None"]:
         #    return Precision.qt_GPTQ
         return Precision.Unknown
+
 
 # Column selection
 COLS = [c.name for c in fields(AutoEvalColumn) if not c.hidden]

@@ -1,12 +1,12 @@
 ---
-title: E
+title: Encodechka Leaderboard
 emoji: 🥇
 colorFrom: green
 colorTo: indigo
 sdk: gradio
-app_file: app.py
+app_file: src/encodechka/app.py
 pinned: true
-license: apache-2.0
+license: MIT
 ---
 
 # Start the configuration
@@ -38,7 +38,7 @@ If you encounter problem on the space, don't hesitate to restart it to remove th
 
 # Code logic for more complex edits
 
-You'll find 
+You'll find
 - the main table' columns names and properties in `src/display/utils.py`
 - the logic to read all results and request files, then convert them in dataframe lines, in `src/leaderboard/read_evals.py`, and `src/populate.py`
 - teh logic to allow or filter submissions in `src/submission/submit.py` and `src/submission/check_validity.py`
